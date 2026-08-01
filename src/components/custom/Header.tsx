@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Select,
   SelectContent,
@@ -6,6 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { PhoneIcon, ShoppingBasketIcon } from "lucide-react";
+import { Button } from "../ui/button";
 
 const items = [
   { label: "Cheesy Delight", value: "cheesy-delight" },
@@ -16,7 +19,7 @@ const items = [
 const Header = () => {
   return (
     <header className="bg-white">
-      <nav className="container mx-auto py-5">
+      <nav className="container mx-auto py-5 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <svg
             width="93"
@@ -47,6 +50,30 @@ const Header = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="flex items-center gap-x-4">
+          <ul className="flex items-center font-medium space-x-4">
+            <li><Link className="hover:text-primary" href={"/"}>Menu</Link></li>
+            <li><Link className="hover:text-primary" href={"/"}>Orders</Link></li>
+          </ul>
+
+          <div className="relative">
+            <Link href={"cart"}>
+                <ShoppingBasketIcon  className="hover:text-primary"/>
+            </Link>
+            <span className="absolute -top-4 -right-5 h-6 w-6 flex items-center justify-center rounded-full bg-primary font-bold text-white">
+                  3
+                </span>
+          </div>
+
+          <div>
+            <div className="flex items-center space-x-2 ml-12">
+              <PhoneIcon />
+              <span>+91 8888888888</span>
+            </div>
+          </div>
+            <Button size={"sm"}>Logout</Button>
         </div>
       </nav>
     </header>
