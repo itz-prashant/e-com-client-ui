@@ -1,6 +1,45 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
+import Productcard, { Product } from "./_components/Productcard";
+
+const products:Product[] = [
+  {
+    id: "1",
+    name: "Margaitta Pizza",
+    description:"This is veg pizza",
+    image: "/pizza-main.png",
+    price: 500
+  },
+  {
+    id: "2",
+    name: "Margaitta Pizza",
+    description:"This is veg pizza",
+    image: "/pizza-main.png",
+    price: 500
+  },
+  {
+    id: "3",
+    name: "Margaitta Pizza",
+    description:"This is veg pizza",
+    image: "/pizza-main.png",
+    price: 500
+  },
+  {
+    id: "4",
+    name: "Margaitta Pizza",
+    description:"This is veg pizza",
+    image: "/pizza-main.png",
+    price: 500
+  },
+  {
+    id: "5",
+    name: "Margaitta Pizza",
+    description:"This is veg pizza",
+    image: "/pizza-main.png",
+    price: 500
+  },
+]
 
 export default function Home() {
   return (
@@ -32,16 +71,24 @@ export default function Home() {
 
       <section>
         <div className="container mx-auto p-12">
-          <Tabs defaultValue="pizza" className="w-[400px]">
+          <Tabs defaultValue="pizza">
             <TabsList>
               <TabsTrigger value="pizza" className="text-lg">Pizza</TabsTrigger>
               <TabsTrigger value="beverages" className="text-lg">Beverages</TabsTrigger>
             </TabsList>
             <TabsContent value="pizza">
-              Pizza
+              <div className="grid grid-cols-4 gap-6 mt-6">
+                {products.map((product)=>(
+                 <Productcard key={product.id} product={product}/>
+              ))}
+              </div>
             </TabsContent>
             <TabsContent value="beverages">
-              Beverages
+              <div className="grid grid-cols-4 gap-6 mt-6">
+                {products.map((product)=>(
+                 <Productcard key={product.id} product={product}/>
+              ))}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
