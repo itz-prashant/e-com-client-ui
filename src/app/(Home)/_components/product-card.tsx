@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import Image from "next/image";
+import Toppinglist from "./topping-list";
 
 export type Product = {
   id: string;
@@ -57,8 +58,8 @@ const Productcard = ({ product }: PropsTypes) => {
               Choose
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md p-0">
-            <div className="flex justify-center">
+          <DialogContent className="sm:max-w-2xl sm:h-auto p-0">
+            <div className="flex justify-center items-center">
               <div className="w-1/3 flex items-center bg-white rounded-2xl p-4">
                 <Image
                   width={500}
@@ -70,6 +71,7 @@ const Productcard = ({ product }: PropsTypes) => {
               <div className="w-2/3 p-4">
                 <h3 className="text-xl font-bold">{product.name}</h3>
                 <p className="mt-1">{product.description}</p>
+
                 <div>
                    <h4 className="mt-5">Choose the size</h4>
                   <RadioGroup
@@ -156,6 +158,8 @@ const Productcard = ({ product }: PropsTypes) => {
                     </div>
                   </RadioGroup>
                 </div>
+                
+                <Toppinglist />
               </div>
             </div>
           </DialogContent>
