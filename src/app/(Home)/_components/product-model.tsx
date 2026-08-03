@@ -22,7 +22,8 @@ const ProductModel = ({ product }: { product: Product }) => {
               width={500}
               height={500}
               alt={product.name}
-              src="/pizza-main.png"
+              src={product.image}
+              unoptimized
             />
           </div>
           <div className="w-2/3 p-4">
