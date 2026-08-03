@@ -1,22 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PropType, Topping } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import Image from "next/image";
 
-export type Topping = {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  isAvailable: boolean;
-};
-type PropType = {
-  topping: Topping;
-  selectedToppings: Topping[];
-  handleCheckBoxCheck: (topping: Topping) => void;
-};
 
 const ToppingCard = ({
   topping,
@@ -24,7 +13,7 @@ const ToppingCard = ({
   handleCheckBoxCheck,
 }: PropType) => {
   const isCurrentSelected = selectedToppings.some(
-    (element) => element.id === topping.id
+    (element:Topping) => element.id === topping.id
   );
   return (
     <Button
@@ -35,7 +24,7 @@ const ToppingCard = ({
         isCurrentSelected ? "border-primary" : ""
       )}
     >
-      <Image src={topping.image} width={80} height={80} alt={topping.name} />
+      <Image src={topping.image} width={80} height={80} alt={topping.name} unoptimized/>
       <h4>{topping.name}</h4>
       <p>₹{topping.price}</p>
       <CircleCheckIcon className={cn("absolute top-2 right-2", isCurrentSelected && "text-primary")}/>

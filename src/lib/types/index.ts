@@ -43,3 +43,15 @@ export type Product ={
     creadtedAt: string
     image: string
 }
+
+export type Topping = {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+};
+export type PropType = {
+  topping: Topping;
+  selectedToppings: Topping[];
+  handleCheckBoxCheck: (topping: Topping) => void;
+};

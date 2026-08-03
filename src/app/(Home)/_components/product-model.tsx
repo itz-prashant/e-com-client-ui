@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -8,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types";
 
 const ProductModel = ({ product }: { product: Product }) => {
+    const handleAddTocart = ()=>{
+        console.log("Add to cart")
+    }
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -66,7 +71,7 @@ const ProductModel = ({ product }: { product: Product }) => {
 
             <div className="flex items-center justify-between mt-8">
               <span className="font-bold">₹400</span>
-              <Button size="lg">
+              <Button size="lg" onClick={handleAddTocart}>
                 <ShoppingCartIcon />
                 <span>Add to cart</span>
               </Button>
