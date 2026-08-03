@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import Image from "next/image";
 import Toppinglist from "./topping-list";
+import { ShoppingCartIcon } from "lucide-react";
 
 export type Product = {
   id: string;
@@ -160,6 +161,14 @@ const Productcard = ({ product }: PropsTypes) => {
                 </div>
                 
                 <Toppinglist />
+
+                <div className="flex items-center justify-between mt-8">
+                  <span className="font-bold">₹400</span>
+                  <Button size="lg">
+                     <ShoppingCartIcon />
+                     <span>Add to cart</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </DialogContent>
