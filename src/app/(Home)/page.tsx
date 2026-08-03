@@ -1,61 +1,39 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
-import Productcard, { Product } from "./_components/product-card";
-import { Category } from "@/lib/types";
-
-const products:Product[] = [
-  {
-    id: "1",
-    name: "Margaitta Pizza",
-    description:"This is veg pizza",
-    image: "/pizza-main.png",
-    price: 500
-  },
-  {
-    id: "2",
-    name: "Margaitta Pizza",
-    description:"This is veg pizza",
-    image: "/pizza-main.png",
-    price: 500
-  },
-  {
-    id: "3",
-    name: "Margaitta Pizza",
-    description:"This is veg pizza",
-    image: "/pizza-main.png",
-    price: 500
-  },
-  {
-    id: "4",
-    name: "Margaitta Pizza",
-    description:"This is veg pizza",
-    image: "/pizza-main.png",
-    price: 500
-  },
-  {
-    id: "5",
-    name: "Margaitta Pizza",
-    description:"This is veg pizza",
-    image: "/pizza-main.png",
-    price: 500
-  },
-]
+import Productcard from "./_components/product-card";
+import { Category, Product } from "@/lib/types";
 
 export default async function Home() {
+  const [categoryResponse, productResponse] = await Promise.all([
+    fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
+      next: {
+        revalidate: 3600, // 1 hour
+      },
+    }),
+    fetch(
+      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=7`,
+      {
+        next: {
+          revalidate: 3600, // 1 hour
+        },
+      }
+    ),
+  ]);
 
-  const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
-    next:{
-      revalidate: 3600 // 1 hour
-    }
-  })
+  if (!categoryResponse.ok) {
+    throw new Error("Failed to fetch categories");
+  }
 
-    if(!categoryResponse.ok){
-      throw new Error("Failed to fetch tenants")
-    }
-    const categories: Category[] = await categoryResponse.json();
-  
-    console.log(categories)
+  if (!productResponse.ok) {
+    throw new Error("Failed to fetch product");
+  }
+
+  const [categories, products] = await Promise.all([
+    categoryResponse.json() as Promise<Category[]>,
+    productResponse.json() as Promise<{ data: Product[] }>,
+  ]);
+
   return (
     <>
       <section className="bg-white">
@@ -85,26 +63,25 @@ export default async function Home() {
 
       <section>
         <div className="container mx-auto p-12">
-          <Tabs defaultValue="pizza">
+          <Tabs defaultValue={categories[0]._id}>
             <TabsList>
-              {categories.map((category)=>(
-                <TabsTrigger key={category._id} value={category._id}>{category.name}</TabsTrigger>
+              {categories.map((category) => (
+                <TabsTrigger key={category._id} value={category._id}>
+                  {category.name}
+                </TabsTrigger>
               ))}
             </TabsList>
-            <TabsContent value="pizza">
-              <div className="grid grid-cols-4 gap-6 mt-6">
-                {products.map((product)=>(
-                 <Productcard key={product.id} product={product}/>
-              ))}
-              </div>
-            </TabsContent>
-            <TabsContent value="beverages">
-              <div className="grid grid-cols-4 gap-6 mt-6">
-                {products.map((product)=>(
-                 <Productcard key={product.id} product={product}/>
-              ))}
-              </div>
-            </TabsContent>
+            {categories.map((category) => (
+              <TabsContent key={category._id} value={category._id}>
+                <div className="grid grid-cols-4 gap-6 mt-6">
+                  {products.data
+                    .filter((product) => product.category._id === category._id)
+                    .map((product) => (
+                      <Productcard key={product._id} product={product} />
+                    ))}
+                </div>
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
       </section>

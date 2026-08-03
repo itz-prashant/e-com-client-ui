@@ -8,41 +8,18 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
 import Image from "next/image";
 import Toppinglist from "./topping-list";
 import { ShoppingCartIcon } from "lucide-react";
-
-export type Product = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-};
+import { Product } from "@/lib/types";
 
 type PropsTypes = { product: Product };
-
-const plans = [
-  {
-    id: "starter",
-    name: "Starter Plan",
-    description: "Perfect for small businesses.",
-    price: "$10",
-  },
-  {
-    id: "pro",
-    name: "Pro Plan",
-    description: "Advanced features with more storage.",
-    price: "$20",
-  },
-] as const;
 
 const Productcard = ({ product }: PropsTypes) => {
   return (
     <Card className="w-full max-w-sm border-none rounded-xl">
       <CardHeader className="flex items-center justify-center">
-        <Image width={150} height={150} alt="pizza-image" src={product.image} />
+        <Image width={150} height={150} alt="pizza-image" src={product.image} unoptimized/>
       </CardHeader>
       <CardContent>
         <h2 className="text-xl font-bold">{product.name}</h2>
@@ -51,7 +28,7 @@ const Productcard = ({ product }: PropsTypes) => {
       <CardFooter className="flex items-center justify-between">
         <p>
           <span>From </span>
-          <span className="font-bold">₹{product.price}</span>
+          <span className="font-bold">₹{100}</span>
         </p>
         <Dialog>
           <DialogTrigger asChild>
