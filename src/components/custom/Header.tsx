@@ -9,14 +9,23 @@ import {
 } from "../ui/select";
 import { PhoneIcon, ShoppingBasketIcon } from "lucide-react";
 import { Button } from "../ui/button";
+import { Tenant } from "@/lib/types";
 
-const items = [
-  { label: "Cheesy Delight", value: "cheesy-delight" },
-  { label: "Pizza Hut", value: "pizza-hut" },
-  { label: "Dominos", value: "dominos" },
-];
+const Header = async () => {
+  const tenantResponse = await fetch(
+    `${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`,
+    {
+      next: {
+        revalidate: 3600,
+      },
+    }
+  );
 
-const Header = () => {
+  if(!tenantResponse.ok){
+    throw new Error("Failed to fetch tenants")
+  }
+  const restaurants: { data: Tenant[] } = await tenantResponse.json();
+
   return (
     <header className="bg-white">
       <nav className="container mx-auto py-5 flex items-center justify-between">
@@ -42,9 +51,9 @@ const Header = () => {
 
             <SelectContent>
               <SelectGroup>
-                {items.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
+                {restaurants.data.map((item) => (
+                  <SelectItem key={item.id} value={String(item.id)}>
+                    {item.name}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -54,17 +63,25 @@ const Header = () => {
 
         <div className="flex items-center gap-x-4">
           <ul className="flex items-center font-medium space-x-4">
-            <li><Link className="hover:text-primary" href={"/"}>Menu</Link></li>
-            <li><Link className="hover:text-primary" href={"/"}>Orders</Link></li>
+            <li>
+              <Link className="hover:text-primary" href={"/"}>
+                Menu
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-primary" href={"/"}>
+                Orders
+              </Link>
+            </li>
           </ul>
 
           <div className="relative">
             <Link href={"cart"}>
-                <ShoppingBasketIcon  className="hover:text-primary"/>
+              <ShoppingBasketIcon className="hover:text-primary" />
             </Link>
             <span className="absolute -top-4 -right-5 h-6 w-6 flex items-center justify-center rounded-full bg-primary font-bold text-white">
-                  3
-                </span>
+              3
+            </span>
           </div>
 
           <div>
@@ -73,7 +90,7 @@ const Header = () => {
               <span>+91 8888888888</span>
             </div>
           </div>
-            <Button size={"sm"}>Logout</Button>
+          <Button size={"sm"}>Logout</Button>
         </div>
       </nav>
     </header>
