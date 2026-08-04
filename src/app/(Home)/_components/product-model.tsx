@@ -18,7 +18,10 @@ type ChoosenConfig = {
 
 const ProductModel = ({ product }: { product: Product }) => {
   const dispatch = useAppDispatch()
-  const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>();
+  const defaultConfiguration = Object.entries(product.category.priceConfiguration).map(([key, value])=>{
+    return {[key]: value.availableOptions[0]}
+  }).reduce((acc, curr)=> ({...acc, ...curr}),{})
+  const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>(defaultConfiguration as unknown as ChoosenConfig);
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
 
   const handleCheckBoxCheck = (topping: Topping) => {
