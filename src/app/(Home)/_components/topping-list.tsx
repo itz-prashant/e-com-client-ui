@@ -29,7 +29,6 @@ const Toppinglist = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/catalog/toppings?tenantId=7`
       );
       const toppings = await toppingResponse.json();
-      console.log("topping", toppings);
       setToppings(toppings);
     };
     fetchData();

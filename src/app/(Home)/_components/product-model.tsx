@@ -8,12 +8,24 @@ import Toppinglist from "./topping-list";
 import { ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+
+type ChoosenConfig = {
+  [key:string] : string
+}
 
 const ProductModel = ({ product }: { product: Product }) => {
+  const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>()
   const handleAddTocart = () => {
     console.log("Add to cart");
   };
+
+  const handleRadioChange = (key:string, data:string)=>{
+   setChoosenConfig((prev)=>{
+      return {...prev, [key]:data}
+    })
+  }
+ 
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -41,6 +53,7 @@ const ProductModel = ({ product }: { product: Product }) => {
                   <div key={key}>
                     <h4 className="mt-5">Choose the {key}</h4>
                     <RadioGroup
+                    onValueChange={(data)=>{handleRadioChange(key, data)}}
                       defaultValue={value.availableOptions[0]}
                       className="grid grid-cols-3 gap-3"
                     >
