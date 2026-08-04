@@ -1,21 +1,25 @@
-'use client'
+"use client";
 
-import { AppStore, makeStore } from "@/lib/store/store"
-import { useRef } from "react"
-import { Provider } from "react-redux"
+import { useEffect, useState } from "react";
+import { Provider } from "react-redux";
+import { setInitialCart } from "@/lib/store/features/cart/cart-slice";
+import { makeStore } from "@/lib/store/store";
 
 export default function StoreProvider({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const storeRef = useRef<AppStore>(undefined)
-  // eslint-disable-next-line react-hooks/refs
-  if (!storeRef.current) {
-    // Create the store instance the first time this renders
-    storeRef.current = makeStore()
-    // TODO: Initial card data from local storage
-  }
-  // eslint-disable-next-line react-hooks/refs
-  return <Provider store={storeRef.current}>{children}</Provider>
+  const [store] = useState(() => makeStore());
+
+  useEffect(() => {
+    try {
+      const cart = JSON.parse(localStorage.getItem("cartItem") ?? "[]");
+      store.dispatch(setInitialCart(cart));
+    } catch (error) {
+      console.error(error);
+    }
+  }, [store]);
+
+  return <Provider store={store}>{children}</Provider>;
 }
