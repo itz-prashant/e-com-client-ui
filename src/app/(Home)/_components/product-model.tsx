@@ -7,25 +7,44 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Toppinglist from "./topping-list";
 import { ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Product } from "@/lib/types";
-import { Suspense, useState } from "react";
+import { Product, Topping } from "@/lib/types";
+import { startTransition, Suspense, useState } from "react";
 
 type ChoosenConfig = {
-  [key:string] : string
-}
+  [key: string]: string;
+};
 
 const ProductModel = ({ product }: { product: Product }) => {
-  const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>()
+  const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>();
+  const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
+
+  const handleCheckBoxCheck = (topping: Topping) => {
+    const isAlreadyExist = selectedToppings.some(
+      (element) => element.id === topping.id
+    );
+
+    startTransition(() => {
+      if (isAlreadyExist) {
+        setSelectedToppings((prev) =>
+          prev.filter((elm: Topping) => elm.id !== topping.id)
+        );
+        return;
+      }
+
+      setSelectedToppings((prev: Topping[]) => [...prev, topping]);
+    });
+  };
+
   const handleAddTocart = () => {
     console.log("Add to cart");
   };
 
-  const handleRadioChange = (key:string, data:string)=>{
-   setChoosenConfig((prev)=>{
-      return {...prev, [key]:data}
-    })
-  }
- 
+  const handleRadioChange = (key: string, data: string) => {
+    setChoosenConfig((prev) => {
+      return { ...prev, [key]: data };
+    });
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -53,7 +72,9 @@ const ProductModel = ({ product }: { product: Product }) => {
                   <div key={key}>
                     <h4 className="mt-5">Choose the {key}</h4>
                     <RadioGroup
-                    onValueChange={(data)=>{handleRadioChange(key, data)}}
+                      onValueChange={(data) => {
+                        handleRadioChange(key, data);
+                      }}
                       defaultValue={value.availableOptions[0]}
                       className="grid grid-cols-3 gap-3"
                     >
@@ -81,7 +102,10 @@ const ProductModel = ({ product }: { product: Product }) => {
               }
             )}
             <Suspense fallback={"Topping Loading..."}>
-              <Toppinglist />
+              <Toppinglist
+                selectedToppings={selectedToppings}
+                handleCheckBoxCheck={handleCheckBoxCheck}
+              />
             </Suspense>
 
             <div className="flex items-center justify-between mt-8">
