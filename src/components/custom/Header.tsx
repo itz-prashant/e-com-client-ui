@@ -10,6 +10,7 @@ import {
 import { PhoneIcon, ShoppingBasketIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tenant } from "@/lib/types";
+import CartCounter from "./cart-counter";
 
 const Header = async () => {
   const tenantResponse = await fetch(
@@ -21,8 +22,8 @@ const Header = async () => {
     }
   );
 
-  if(!tenantResponse.ok){
-    throw new Error("Failed to fetch tenants")
+  if (!tenantResponse.ok) {
+    throw new Error("Failed to fetch tenants");
   }
   const restaurants: { data: Tenant[] } = await tenantResponse.json();
 
@@ -75,14 +76,7 @@ const Header = async () => {
             </li>
           </ul>
 
-          <div className="relative">
-            <Link href={"cart"}>
-              <ShoppingBasketIcon className="hover:text-primary" />
-            </Link>
-            <span className="absolute -top-4 -right-5 h-6 w-6 flex items-center justify-center rounded-full bg-primary font-bold text-white">
-              3
-            </span>
-          </div>
+          <CartCounter />
 
           <div>
             <div className="flex items-center space-x-2 ml-12">
