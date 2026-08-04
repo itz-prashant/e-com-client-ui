@@ -9,12 +9,15 @@ import { ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product, Topping } from "@/lib/types";
 import { startTransition, Suspense, useState } from "react";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { addToCart } from "@/lib/store/features/cart/cart-slice";
 
 type ChoosenConfig = {
   [key: string]: string;
 };
 
 const ProductModel = ({ product }: { product: Product }) => {
+  const dispatch = useAppDispatch()
   const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>();
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
 
@@ -35,8 +38,15 @@ const ProductModel = ({ product }: { product: Product }) => {
     });
   };
 
-  const handleAddTocart = () => {
-    console.log("Add to cart");
+  const handleAddTocart = (product:Product) => {
+    const ItemAdd = {
+      product,
+      choosenConfiguration: {
+        priceConfiguration: choosenConfig!,
+        selectedToppings
+      }
+    }
+    dispatch(addToCart(ItemAdd))
   };
 
   const handleRadioChange = (key: string, data: string) => {
@@ -110,7 +120,7 @@ const ProductModel = ({ product }: { product: Product }) => {
 
             <div className="flex items-center justify-between mt-8">
               <span className="font-bold">₹400</span>
-              <Button size="lg" onClick={handleAddTocart}>
+              <Button size="lg" onClick={()=>handleAddTocart(product)}>
                 <ShoppingCartIcon />
                 <span>Add to cart</span>
               </Button>
