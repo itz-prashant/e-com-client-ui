@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -8,11 +8,12 @@ import Toppinglist from "./topping-list";
 import { ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/lib/types";
+import { Suspense } from "react";
 
 const ProductModel = ({ product }: { product: Product }) => {
-    const handleAddTocart = ()=>{
-        console.log("Add to cart")
-    }
+  const handleAddTocart = () => {
+    console.log("Add to cart");
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -66,8 +67,9 @@ const ProductModel = ({ product }: { product: Product }) => {
                 );
               }
             )}
-
-            <Toppinglist />
+            <Suspense fallback={"Topping Loading..."}>
+              <Toppinglist />
+            </Suspense>
 
             <div className="flex items-center justify-between mt-8">
               <span className="font-bold">₹400</span>
