@@ -12,6 +12,7 @@ import { startTransition, Suspense, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { addToCart, CartItem } from "@/lib/store/features/cart/cart-slice";
 import { hashTheItem } from "@/lib/utils";
+import { toast } from "sonner"
 
 type ChoosenConfig = {
   [key: string]: string;
@@ -100,6 +101,7 @@ const ProductModel = ({ product }: { product: Product }) => {
     dispatch(addToCart(ItemAdd));
     setSelectedToppings([])
     setDialogOpen(false)
+    toast("Item added to cart")
   };
 
   const handleRadioChange = (key: string, data: string) => {
