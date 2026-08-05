@@ -1,15 +1,17 @@
 import { Product, Topping } from "@/lib/types";
+import { hashTheItem } from "@/lib/utils";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export interface CartItem {
-  product: Product;
-  choosenConfiguration: {
-    priceConfiguration: {
-      [key: string]: string;
+export interface CartItem extends Pick<Product, '_id' | 'name' | 'image' | 'priceConfiguration'> {
+    chosenConfiguration: {
+        priceConfiguration: {
+            [key: string]: string;
+        };
+        selectedToppings: Topping[];
     };
-    selectedToppings: Topping[];
-  };
+    qty: number;
+    hash?: string;
 }
 export interface CartState {
   cartItem: CartItem[];
@@ -24,18 +26,24 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
+      const hash = hashTheItem(action.payload)
       const newItem = {
-        product: action.payload.product,
-        choosenConfiguration: action.payload.choosenConfiguration,
+        ...action.payload,
+        hash:hash
+        // product: action.payload.product,
+        // choosenConfiguration: action.payload.choosenConfiguration,
       };
-      window.localStorage.setItem("cartItem", JSON.stringify([...state.cartItem, newItem]));
+      window.localStorage.setItem(
+        "cartItem",
+        JSON.stringify([...state.cartItem, newItem])
+      );
       return {
         cartItem: [...state.cartItem, newItem],
       };
     },
-    setInitialCart : (state, action: PayloadAction<CartItem[]>)=>{
-      state.cartItem.push(...action.payload)
-    }
+    setInitialCart: (state, action: PayloadAction<CartItem[]>) => {
+      state.cartItem.push(...action.payload);
+    },
   },
 });
 
