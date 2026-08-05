@@ -8,7 +8,7 @@ import Toppinglist from "./topping-list";
 import { ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product, Topping } from "@/lib/types";
-import { startTransition, Suspense, useState } from "react";
+import { startTransition, Suspense, useMemo, useState } from "react";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { addToCart } from "@/lib/store/features/cart/cart-slice";
 
@@ -23,6 +23,15 @@ const ProductModel = ({ product }: { product: Product }) => {
   }).reduce((acc, curr)=> ({...acc, ...curr}),{})
   const [choosenConfig, setChoosenConfig] = useState<ChoosenConfig>(defaultConfiguration as unknown as ChoosenConfig);
   const [selectedToppings, setSelectedToppings] = useState<Topping[]>([]);
+
+  const totalPrice = useMemo(()=>{
+    const toppingsTotal = selectedToppings.reduce((acc, curr)=> acc + curr.price, 0)
+    const configPrice = Object.entries(choosenConfig).reduce((acc,[key ,value]:[string, string])=>{
+      const price = Number(product.priceConfiguration[key].availableOptions?.[value])
+      return acc + price 
+    },0)
+    return toppingsTotal + configPrice 
+  },[choosenConfig, selectedToppings, product])
 
   const handleCheckBoxCheck = (topping: Topping) => {
     const isAlreadyExist = selectedToppings.some(
@@ -122,7 +131,7 @@ const ProductModel = ({ product }: { product: Product }) => {
             </Suspense>
 
             <div className="flex items-center justify-between mt-8">
-              <span className="font-bold">₹400</span>
+              <span className="font-bold">₹{totalPrice}</span>
               <Button size="lg" onClick={()=>handleAddTocart(product)}>
                 <ShoppingCartIcon />
                 <span>Add to cart</span>
