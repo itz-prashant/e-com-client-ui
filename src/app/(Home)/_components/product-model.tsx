@@ -98,6 +98,7 @@ const ProductModel = ({ product }: { product: Product }) => {
       qty: 1,
     };
     dispatch(addToCart(ItemAdd));
+    setSelectedToppings([])
     setDialogOpen(false)
   };
 
