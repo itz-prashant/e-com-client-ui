@@ -31,6 +31,8 @@ const ProductList = async () => {
     categoryResponse.json() as Promise<Category[]>,
     productResponse.json() as Promise<{ data: Product[] }>,
   ]);
+
+  console.log("p", products)
   return (
     <section>
       <div className="container mx-auto p-12">
