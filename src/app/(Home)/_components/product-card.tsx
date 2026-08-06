@@ -7,10 +7,12 @@ import {
 } from "@/components/ui/card";
 import { Product } from "@/lib/types";
 import ProductModel from "./product-model";
+import { getFromPrice } from "@/lib/utils";
 
 type PropsTypes = { product: Product };
 
 const Productcard = ({ product }: PropsTypes) => {
+  console.log(product)
   return (
     <Card className="w-full max-w-sm border-none rounded-xl">
       <CardHeader className="flex items-center justify-center">
@@ -29,7 +31,7 @@ const Productcard = ({ product }: PropsTypes) => {
       <CardFooter className="flex items-center justify-between">
         <p>
           <span>From </span>
-          <span className="font-bold">₹{100}</span>
+          <span className="font-bold">₹{getFromPrice(product)}</span>
         </p>
           <ProductModel product={product} />
       </CardFooter>
