@@ -1,16 +1,9 @@
 import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { PhoneIcon, ShoppingBasketIcon } from "lucide-react";
+import { PhoneIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tenant } from "@/lib/types";
 import CartCounter from "./cart-counter";
+import TenantSelect from "./tenant-select";
 
 const Header = async () => {
   const tenantResponse = await fetch(
@@ -45,21 +38,7 @@ const Header = async () => {
             <circle cx="11" cy="11" r="7.5" stroke="#F65F42" strokeWidth="7" />
           </svg>
 
-          <Select>
-            <SelectTrigger className="w-full max-w-48">
-              <SelectValue placeholder="Select a Restaurant" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectGroup>
-                {restaurants.data.map((item) => (
-                  <SelectItem key={item.id} value={String(item.id)}>
-                    {item.name}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <TenantSelect restaurants={restaurants} />
         </div>
 
         <div className="flex items-center gap-x-4">

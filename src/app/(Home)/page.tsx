@@ -3,8 +3,14 @@ import Image from "next/image";
 import ProductList from "./_components/product-list";
 import { Suspense } from "react";
 
-export default function Home() {
-
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    restaurantId?: string;
+  }>;
+}) {
+  const params = await searchParams;
   return (
     <>
       <section className="bg-white">
@@ -33,7 +39,7 @@ export default function Home() {
       </section>
 
       <Suspense fallback={"Loading..."}>
-       <ProductList />
+        <ProductList searchParams={params} />
       </Suspense>
     </>
   );

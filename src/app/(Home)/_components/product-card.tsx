@@ -12,7 +12,6 @@ import { getFromPrice } from "@/lib/utils";
 type PropsTypes = { product: Product };
 
 const Productcard = ({ product }: PropsTypes) => {
-  console.log(product)
   return (
     <Card className="w-full max-w-sm border-none rounded-xl">
       <CardHeader className="flex items-center justify-center">

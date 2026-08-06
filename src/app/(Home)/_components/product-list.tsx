@@ -2,7 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Category, Product } from "@/lib/types";
 import Productcard from "./product-card";
 
-const ProductList = async () => {
+const ProductList = async ({searchParams}:{searchParams:{restaurantId?:string}}) => {
+
     const [categoryResponse, productResponse] = await Promise.all([
     fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
       next: {
@@ -10,7 +11,7 @@ const ProductList = async () => {
       },
     }),
     fetch(
-      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=7`,
+      `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${searchParams.restaurantId}`,
       {
         next: {
           revalidate: 3600, // 1 hour
