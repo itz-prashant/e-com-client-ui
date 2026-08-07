@@ -1,16 +1,25 @@
 import Image from "next/image";
 import { X } from "lucide-react";
 import QtyChanger from "./qtyChanger";
-import { changeQuantity, CartItem as Item } from "@/lib/store/features/cart/cart-slice";
+import {
+  changeQuantity,
+  CartItem as Item,
+} from "@/lib/store/features/cart/cart-slice";
 import { useAppDispatch } from "@/lib/store/hooks";
 
 const CartItem = ({ item }: { item: Item }) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   return (
     <>
       <div className="grid grid-cols-2">
         <div className="flex items-center w-3/4">
-          <Image src={item.image} width={100} height={100} alt={item.name} unoptimized/>
+          <Image
+            src={item.image}
+            width={100}
+            height={100}
+            alt={item.name}
+            unoptimized
+          />
           <div className="flex gap-12 ml-6 w-full">
             <div className="flex-1">
               <h2 className="font-bold">{item.name}</h2>
@@ -29,11 +38,24 @@ const CartItem = ({ item }: { item: Item }) => {
         </div>
         <div className="flex items-center gap-4 justify-between">
           <div>
-            <QtyChanger handleQtyChange={(data) => {dispatch(changeQuantity({hash: item.hash as string, qty:data}))}}>{item.qty}</QtyChanger>
+            <QtyChanger
+              handleQtyChange={(data) => {
+                dispatch(
+                  changeQuantity({ hash: item.hash as string, qty: data })
+                );
+              }}
+            >
+              {item.qty}
+            </QtyChanger>
           </div>
           <div className="flex">
             <div className="font-bold w-12">&#8377;300</div>
-            <button className="ml-4" onClick={() => {}}>
+            <button
+              className="ml-4"
+              onClick={() => {
+                dispatch(changeQuantity({ hash: item.hash as string, qty: 0 }));
+              }}
+            >
               <X />
             </button>
           </div>
