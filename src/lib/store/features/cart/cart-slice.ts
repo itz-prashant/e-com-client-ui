@@ -44,10 +44,20 @@ export const cartSlice = createSlice({
     setInitialCart: (state, action: PayloadAction<CartItem[]>) => {
       state.cartItem.push(...action.payload);
     },
+    changeQuantity:(state, action: PayloadAction<{hash: string; qty: number}>)=>{
+      const index = state.cartItem.findIndex((item)=> item.hash === action.payload.hash)
+
+      state.cartItem[index].qty = Math.max(1, state.cartItem[index].qty + action.payload.qty)
+
+      window.localStorage.setItem(
+        "cartItem",
+        JSON.stringify(state.cartItem)
+      );
+    }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addToCart, setInitialCart } = cartSlice.actions;
+export const { addToCart, setInitialCart, changeQuantity } = cartSlice.actions;
 
 export default cartSlice.reducer;
