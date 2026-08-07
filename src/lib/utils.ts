@@ -1,27 +1,47 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { CartItem } from "./store/features/cart/cart-slice"
-import { SHA256 } from 'crypto-js';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { CartItem } from "./store/features/cart/cart-slice";
+import { SHA256 } from "crypto-js";
 import { Product } from "./types";
+import { useMemo } from "react";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export function hashTheItem(payload:CartItem):string{
-  const jsonString = JSON.stringify({...payload, qty:undefined})
+export function hashTheItem(payload: CartItem): string {
+  const jsonString = JSON.stringify({ ...payload, qty: undefined });
 
-  const hash = SHA256(jsonString).toString()
+  const hash = SHA256(jsonString).toString();
 
-  return hash
+  return hash;
 }
 
-export function getFromPrice(product:Product):number{
-  const basePrice = Object.entries(product.priceConfiguration).filter(([Key, value])=>{
-    return value.priceType === "base"
-  }).reduce((acc, [key, value])=>{
-    const smallestPrice = Math.min(...Object.values(value.availableOptions))
-    return acc + smallestPrice
-  },0)
-  return basePrice
+export function getFromPrice(product: Product): number {
+  const basePrice = Object.entries(product.priceConfiguration)
+    .filter(([Key, value]) => {
+      return value.priceType === "base";
+    })
+    .reduce((acc, [key, value]) => {
+      const smallestPrice = Math.min(...Object.values(value.availableOptions));
+      return acc + smallestPrice;
+    }, 0);
+  return basePrice;
+}
+
+export function getItemTotal(product: CartItem) {
+  const toppingsTotal = product.chosenConfiguration.selectedToppings.reduce(
+    (acc, curr) => acc + curr.price,
+    0
+  );
+
+  const configPrice = Object.entries(
+    product.chosenConfiguration.priceConfiguration
+  ).reduce((acc, [key, value]: [string, string]) => {
+    const price = Number(
+      product.priceConfiguration[key].availableOptions?.[value]
+    );
+    return acc + price;
+  }, 0);
+  return toppingsTotal + configPrice;
 }
