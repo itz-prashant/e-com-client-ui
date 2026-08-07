@@ -6,9 +6,12 @@ import {
   CartItem as Item,
 } from "@/lib/store/features/cart/cart-slice";
 import { useAppDispatch } from "@/lib/store/hooks";
+import useTotalPrice from "@/lib/hooks/useTotalPrice";
 
 const CartItem = ({ item }: { item: Item }) => {
   const dispatch = useAppDispatch();
+
+  const total = useTotalPrice(item)
   return (
     <>
       <div className="grid grid-cols-2">
@@ -49,7 +52,7 @@ const CartItem = ({ item }: { item: Item }) => {
             </QtyChanger>
           </div>
           <div className="flex">
-            <div className="font-bold w-12">&#8377;300</div>
+            <div className="font-bold w-12">&#8377;{total * item.qty}</div>
             <button
               className="ml-4"
               onClick={() => {
