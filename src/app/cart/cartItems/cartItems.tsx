@@ -54,7 +54,7 @@ const finalTotal = useMemo(()=>{
       <div className="flex justify-between items-center">
         <span className="font-bold text-xl">&#8377;{finalTotal}</span>
         <Button>
-          Checkout
+          <Link href={"/checkout"}>Checkout</Link>
           <ArrowRight size={16} className="ml-2" />
         </Button>
       </div>
