@@ -7,13 +7,30 @@ import Image from "next/image";
 import login from "@/lib/action/action";
 import { Button } from "@/components/ui/button";
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
-const initialState = undefined;
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      type="submit"
+      className="w-full"
+      disabled={pending}
+    >
+      {pending ? "Please wait" : "Login"}
+    </Button>
+  );
+};
+
+const initialState = {
+  type: "",
+  message: "",
+};
 
 const Login = () => {
   const [state, formAction] = useActionState(login, initialState);
 
-  console.log("state",state)
+  console.log("state", state);
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
@@ -49,7 +66,7 @@ const Login = () => {
                 </div>
                 <Input id="password" name="password" type="password" required />
               </div>
-              <Button>Login</Button>
+              <SubmitButton />
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
