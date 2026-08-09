@@ -8,15 +8,12 @@ import login from "@/lib/action/action";
 import { Button } from "@/components/ui/button";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { redirect } from "next/navigation";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
-    <Button
-      type="submit"
-      className="w-full"
-      disabled={pending}
-    >
+    <Button type="submit" className="w-full" disabled={pending}>
       {pending ? "Please wait" : "Login"}
     </Button>
   );
@@ -30,13 +27,24 @@ const initialState = {
 const Login = () => {
   const [state, formAction] = useActionState(login, initialState);
 
-  console.log("state", state);
+
+  if(state.type === "success"){
+    redirect("/")
+  }
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
+            <p
+              aria-live="polite"
+              className={`${
+                state.type === "error" ? "text-red-500" : "text-green-500"
+              }`}
+            >
+              {state.message}
+            </p>
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">
               Enter your email below to login to your account

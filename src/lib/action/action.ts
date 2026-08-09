@@ -27,7 +27,7 @@ export default async function login(prevState: any, formData: FormData) {
       console.log("e", error);
       return {
         type: "error",
-        message: error.message[0].message,
+        message: error.message[0].mes,
       };
     }
     const c = response.headers.getSetCookie();
