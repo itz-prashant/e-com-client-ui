@@ -64,3 +64,16 @@ export type PropType = {
   selectedToppings: Topping[];
   handleCheckBoxCheck: (topping: Topping) => void;
 };
+
+export type Address = {
+  text: string
+  isDefault: boolean
+}
+
+export type Customer = {
+  _id: string
+  firstName: string
+  lastName:string
+  email: string
+  address: Address[]
+}

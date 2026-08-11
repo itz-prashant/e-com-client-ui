@@ -1,12 +1,7 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -21,24 +16,25 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { getCustomer } from "@/lib/http/api";
+import { Address, Customer } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { Coins, CreditCard, Plus } from "lucide-react";
 
 const CustomerForm = () => {
-    const {data:customer, isLoading} = useQuery({
-        queryKey:['customer'],
-        queryFn: async ()=>{
-            // return await getCustomer().then(res => res.data)
-            const res = await getCustomer()
-            return res.data.customer
-        }
-    })
+  const { data: customer, isLoading } = useQuery<Customer>({
+    queryKey: ["customer"],
+    queryFn: async () => {
+      // return await getCustomer().then(res => res.data)
+      const res = await getCustomer();
+      return res.data.customer;
+    },
+  });
 
-    if(!isLoading){
-        return <div>Loading....</div>
-    }
+  // if(!isLoading){
+  //     return <div>Loading....</div>
+  // }
 
-    console.log("cus", customer)
+  console.log("cus", customer);
   return (
     <div className="flex container gap-6 mt-16">
       <Card className="w-3/5 border-none">
@@ -109,24 +105,21 @@ const CustomerForm = () => {
                   defaultValue="option-one"
                   className="grid grid-cols-2 gap-6 mt-2"
                 >
-                  <Card className="p-6">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-one" id="option-one" />
-                      <Label htmlFor="option-one" className="leading-normal">
-                        123, ABC Street, Malad West, Mumbai, Maharashtra, India
-                        400064
-                      </Label>
-                    </div>
-                  </Card>
-                  <Card className="p-6">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="option-two" id="option-two" />
-                      <Label htmlFor="option-two" className="leading-normal">
-                        Flat No. 501, Sunshine Apartments, Andheri East, Mumbai,
-                        Maharashtra, India 400069
-                      </Label>
-                    </div>
-                  </Card>
+                  {customer?.address.map((item:Address) => {
+                    return (
+                      <Card key={item.text} className="p-6">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="option-one" id="option-one" />
+                          <Label
+                            htmlFor="option-one"
+                            className="leading-normal"
+                          >
+                            {item.text}
+                          </Label>
+                        </div>
+                      </Card>
+                    );
+                  })}
                 </RadioGroup>
               </div>
             </div>
@@ -214,7 +207,7 @@ const CustomerForm = () => {
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default CustomerForm
+export default CustomerForm;
