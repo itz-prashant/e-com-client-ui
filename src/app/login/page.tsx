@@ -8,7 +8,7 @@ import login from "@/lib/action/action";
 import { Button } from "@/components/ui/button";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
@@ -25,11 +25,12 @@ const initialState = {
 };
 
 const Login = () => {
+  const searchParams = useSearchParams()
+  const returnTo = searchParams.get("return-to")
   const [state, formAction] = useActionState(login, initialState);
 
-
   if(state.type === "success"){
-    redirect("/")
+    redirect(returnTo ? returnTo : "/")
   }
 
   return (
