@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -21,9 +20,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { getCustomer } from "@/lib/http/api";
+import { useQuery } from "@tanstack/react-query";
 import { Coins, CreditCard, Plus } from "lucide-react";
 
 const CustomerForm = () => {
+    const {data:customer, isLoading} = useQuery({
+        queryKey:['customer'],
+        queryFn: async ()=>{
+            // return await getCustomer().then(res => res.data)
+            const res = await getCustomer()
+            return res.data.customer
+        }
+    })
+
+    if(!isLoading){
+        return <div>Loading....</div>
+    }
+
+    console.log("cus", customer)
   return (
     <div className="flex container gap-6 mt-16">
       <Card className="w-3/5 border-none">
@@ -38,7 +53,7 @@ const CustomerForm = () => {
                 id="fname"
                 type="text"
                 className="w-full"
-                defaultValue=""
+                defaultValue={customer?.firstName}
               />
             </div>
             <div className="grid gap-3">
@@ -47,7 +62,7 @@ const CustomerForm = () => {
                 id="lname"
                 type="text"
                 className="w-full"
-                defaultValue=""
+                defaultValue={customer?.lastName}
               />
             </div>
             <div className="grid gap-3">
@@ -56,7 +71,8 @@ const CustomerForm = () => {
                 id="email"
                 type="text"
                 className="w-full"
-                defaultValue=""
+                disabled
+                defaultValue={customer?.email}
               />
             </div>
             <div className="grid gap-3">
