@@ -23,13 +23,22 @@ import { getSession } from "@/lib/session";
 import { Coins, CreditCard, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export default async function Checkout() {
-  const session = await getSession()
+export default async function Checkout({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    restaurantId?: string;
+  }>;
+}) {
+  const session = await getSession();
+  const params = await searchParams;
 
-  if(!session){
-    redirect("/login")
+  const queryString = new URLSearchParams(params).toString()
+
+  if (!session) {
+    redirect(`/login?${queryString}`);
   }
-  
+
   return (
     <div className="flex container gap-6 mt-16">
       <Card className="w-3/5 border-none">
