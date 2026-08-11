@@ -6,6 +6,7 @@ import Header from "@/components/custom/Header";
 import StoreProvider from "./StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
 import Refresher from "@/components/custom/refresher";
+import QueryProvider from "./query-provider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -29,11 +30,13 @@ export default function RootLayout({
     >
       <StoreProvider>
         <body className="min-h-full flex flex-col">
-          <Refresher>
-            <Header />
-            <main>{children}</main>
-            <Toaster />
-          </Refresher>
+          <QueryProvider>
+            <Refresher>
+              <Header />
+              <main>{children}</main>
+              <Toaster />
+            </Refresher>
+          </QueryProvider>
         </body>
       </StoreProvider>
     </html>
