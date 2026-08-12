@@ -42,9 +42,14 @@ const AddAddress = ({id}:{id:string}) => {
     }
   })
 
-  const handleSubmitAddress = (data: z.infer<typeof formSchema>) => {
+  const handleSubmitAddress = (e) => {
+    e.stopPropogation()
+
+   return addressForm.handleSubmit((data:z.infer<typeof formSchema>)=>{
     mutate(data.addresses)
+    })(e)
   };
+  
   return (
     <Dialog open={isModelOpen} onOpenChange={setIsModelOpen}>
       <DialogTrigger asChild>
@@ -55,7 +60,7 @@ const AddAddress = ({id}:{id:string}) => {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={addressForm.handleSubmit(handleSubmitAddress)}>
+        <form onSubmit={handleSubmitAddress}>
           <DialogHeader>
             <DialogTitle>Add Address</DialogTitle>
             <DialogDescription>
