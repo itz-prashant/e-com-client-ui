@@ -2,15 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -18,10 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { getCustomer } from "@/lib/http/api";
 import { Address, Customer } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { Coins, CreditCard, Plus } from "lucide-react";
+import { Coins, CreditCard } from "lucide-react";
+import AddAddress from "./add-address";
 
 const CustomerForm = () => {
-  const { data: customer, isLoading } = useQuery<Customer>({
+  const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
     queryFn: async () => {
       // return await getCustomer().then(res => res.data)
@@ -30,13 +22,11 @@ const CustomerForm = () => {
     },
   });
 
-  // if(!isLoading){
-  //     return <div>Loading....</div>
-  // }
-
-  console.log("cus", customer);
+  if(!customer){
+      return
+  }
   return (
-    <div className="flex container gap-6 mt-16">
+    <div className="flex container mx-auto gap-6 mt-16">
       <Card className="w-3/5 border-none">
         <CardHeader>
           <CardTitle>Customer details</CardTitle>
@@ -75,37 +65,13 @@ const CustomerForm = () => {
               <div>
                 <div className="flex items-center justify-between">
                   <Label htmlFor="name">Address</Label>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button size={"sm"} variant={"link"}>
-                        <Plus size={"16"} />
-                        <span className="ml-2">Add New Address</span>
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Add Address</DialogTitle>
-                        <DialogDescription>
-                          We can save your address for next time order.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div>
-                          <Label htmlFor="address">Address</Label>
-                          <textarea className="mt-2" />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit">Save changes</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                <AddAddress id={customer._id}/>
                 </div>
                 <RadioGroup
                   defaultValue="option-one"
                   className="grid grid-cols-2 gap-6 mt-2"
                 >
-                  {customer?.address.map((item:Address) => {
+                  {customer?.address?.map((item:Address) => {
                     return (
                       <Card key={item.text} className="p-6">
                         <div className="flex items-center space-x-2">
