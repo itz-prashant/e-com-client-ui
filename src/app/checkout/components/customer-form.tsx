@@ -1,7 +1,6 @@
 "use client";
 
 import z from "zod";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +14,7 @@ import AddAddress from "./add-address";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldGroup } from "@/components/ui/field";
+import OrderSummary from "./order-summary";
 
 const customerSchema = z.object({
   address: z.string("Please select an address"),
@@ -184,7 +184,7 @@ const CustomerForm = () => {
             </div>
           </CardContent>
         </Card>
-       
+       <OrderSummary />
       </div>
     </form>
   );
