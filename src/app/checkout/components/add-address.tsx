@@ -43,7 +43,7 @@ const AddAddress = ({id}:{id:string}) => {
   })
 
   const handleSubmitAddress = (e) => {
-    e.stopPropogation()
+    e.stopPropagation()
 
    return addressForm.handleSubmit((data:z.infer<typeof formSchema>)=>{
     mutate(data.addresses)

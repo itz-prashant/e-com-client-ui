@@ -11,7 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 
-const OrderSummary = () => {
+const OrderSummary = ({handleCouponCodeChange}:{handleCouponCodeChange:(code:string)=>void}) => {
   const searchParams = useSearchParams();
   const cart = useAppSelector((state) => state.cart.cartItem);
 
@@ -64,10 +64,12 @@ const OrderSummary = () => {
         console.log("data rec", data)
         if(data.valid){
             setDiscountError("")
+            handleCouponCodeChange(couponCodeRef.current ? couponCodeRef.current.value : "")
             setDiscountPercentage(data.discount)
             return
         }
         setDiscountError("Coupon is invalid")
+        handleCouponCodeChange("")
         setDiscountPercentage(0)
     }
   });

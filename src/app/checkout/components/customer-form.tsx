@@ -15,6 +15,10 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldGroup } from "@/components/ui/field";
 import OrderSummary from "./order-summary";
+import { useAppSelector } from "@/lib/store/hooks";
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 const customerSchema = z.object({
   address: z.string("Please select an address"),
@@ -27,6 +31,10 @@ const CustomerForm = () => {
     resolver: zodResolver(customerSchema),
   });
 
+  const searchParams = useSearchParams()
+const [chosenCouponCode, setChosenCouponCode] = useState("");
+  const cart = useAppSelector((state)=> state.cart)
+
   const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
     queryFn: async () => {
@@ -37,7 +45,23 @@ const CustomerForm = () => {
   });
 
   const handlePlaceOrder = (data: z.infer<typeof customerSchema>) => {
-    console.log(data);
+    // console.log(data);
+    const tenantId = searchParams.get("restaurantId")
+    if(!tenantId){
+      toast("Restaurant id is required")
+      return
+    }
+    const orderData = {
+      cart: cart.cartItem,
+      couponCode: chosenCouponCode? chosenCouponCode : "",
+      tenantId: tenantId,
+      customerId: customer?._id,
+      comment : data.comment,
+      address: data.address,
+      paymentMode: data.paymentMode
+    }
+
+    console.log("orderdata", orderData)
   };
 
   if (!customer) {
@@ -184,7 +208,7 @@ const CustomerForm = () => {
             </div>
           </CardContent>
         </Card>
-       <OrderSummary />
+       <OrderSummary handleCouponCodeChange={(code)=>setChosenCouponCode(code)}/>
       </div>
     </form>
   );
