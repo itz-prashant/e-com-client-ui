@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { getCustomer } from "@/lib/http/api";
-import { Address, Customer } from "@/lib/types";
-import { useQuery } from "@tanstack/react-query";
+import { createOder, getCustomer } from "@/lib/http/api";
+import { Address, Customer, Orderdata } from "@/lib/types";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Coins, CreditCard } from "lucide-react";
 import AddAddress from "./add-address";
 import { Controller, useForm } from "react-hook-form";
@@ -16,9 +16,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Field, FieldGroup } from "@/components/ui/field";
 import OrderSummary from "./order-summary";
 import { useAppSelector } from "@/lib/store/hooks";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
 const customerSchema = z.object({
   address: z.string("Please select an address"),
@@ -31,9 +32,12 @@ const CustomerForm = () => {
     resolver: zodResolver(customerSchema),
   });
 
-  const searchParams = useSearchParams()
-const [chosenCouponCode, setChosenCouponCode] = useState("");
-  const cart = useAppSelector((state)=> state.cart)
+  const searchParams = useSearchParams();
+  const [chosenCouponCode, setChosenCouponCode] = useState("");
+
+  const idempotencyKeyRef = useRef("");
+
+  const cart = useAppSelector((state) => state.cart);
 
   const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
@@ -44,24 +48,36 @@ const [chosenCouponCode, setChosenCouponCode] = useState("");
     },
   });
 
+  const { mutate } = useMutation({
+    mutationKey: ["order"],
+    mutationFn: async (data: Orderdata) => {
+      const idempotencyKey = idempotencyKeyRef.current
+        ? idempotencyKeyRef.current
+        : (idempotencyKeyRef.current == uuidv4() + customer?._id);
+      await createOder(data, idempotencyKey as string);
+    },
+    retry: 3,
+  });
+
   const handlePlaceOrder = (data: z.infer<typeof customerSchema>) => {
     // console.log(data);
-    const tenantId = searchParams.get("restaurantId")
-    if(!tenantId){
-      toast("Restaurant id is required")
-      return
+    const tenantId = searchParams.get("restaurantId");
+    if (!tenantId) {
+      toast("Restaurant id is required");
+      return;
     }
-    const orderData = {
+    const orderData: Orderdata = {
       cart: cart.cartItem,
-      couponCode: chosenCouponCode? chosenCouponCode : "",
+      couponCode: chosenCouponCode ? chosenCouponCode : "",
       tenantId: tenantId,
-      customerId: customer?._id,
-      comment : data.comment,
+      customerId: customer ? customer?._id : "",
+      comment: data.comment,
       address: data.address,
-      paymentMode: data.paymentMode
-    }
+      paymentMode: data.paymentMode,
+    };
 
-    console.log("orderdata", orderData)
+    // console.log("orderdata", orderData)
+    mutate(orderData);
   };
 
   if (!customer) {
@@ -208,7 +224,9 @@ const [chosenCouponCode, setChosenCouponCode] = useState("");
             </div>
           </CardContent>
         </Card>
-       <OrderSummary handleCouponCodeChange={(code)=>setChosenCouponCode(code)}/>
+        <OrderSummary
+          handleCouponCodeChange={(code) => setChosenCouponCode(code)}
+        />
       </div>
     </form>
   );

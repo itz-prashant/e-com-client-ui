@@ -1,3 +1,5 @@
+import { CartItem } from "../store/features/cart/cart-slice";
+
 export interface Tenant {
   id: number;
   name: string;
@@ -66,19 +68,29 @@ export type PropType = {
 };
 
 export type Address = {
-  text: string
-  isDefault: boolean
-}
+  text: string;
+  isDefault: boolean;
+};
 
 export type Customer = {
-  _id: string
-  firstName: string
-  lastName:string
-  email: string
-  address: Address[]
-}
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: Address[];
+};
 
 export type CouponCode = {
-  code: string
-  tenantId: string
-}
+  code: string;
+  tenantId: string;
+};
+
+export type Orderdata = {
+  cart: CartItem[];
+  couponCode: string;
+  tenantId: string;
+  customerId: string;
+  comment?: string;
+  address: string;
+  paymentMode: string;
+};
