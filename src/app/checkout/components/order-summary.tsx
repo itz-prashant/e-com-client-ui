@@ -8,15 +8,22 @@ import { useAppSelector } from "@/lib/store/hooks";
 import { CouponCode } from "@/lib/types";
 import { getItemTotal } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
+import { LoaderCircleIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 
-const OrderSummary = ({handleCouponCodeChange}:{handleCouponCodeChange:(code:string)=>void}) => {
+const OrderSummary = ({
+  isPlaceOrderPending,
+  handleCouponCodeChange,
+}: {
+  isPlaceOrderPending: boolean;
+  handleCouponCodeChange: (code: string) => void;
+}) => {
   const searchParams = useSearchParams();
   const cart = useAppSelector((state) => state.cart.cartItem);
 
   const [discountPercentage, setDiscountPercentage] = useState(0);
-  const [discountError, setDiscountError] = useState("")
+  const [discountError, setDiscountError] = useState("");
   const couponCodeRef = useRef<HTMLInputElement>(null);
   const taxesPercentage = 5;
   const deliveryCharges = 50;
@@ -42,41 +49,43 @@ const OrderSummary = ({handleCouponCodeChange}:{handleCouponCodeChange:(code:str
 
   const grandTotalWithOutDiscount = useMemo(() => {
     return subTotal + taxesAmount + deliveryCharges;
-  }, [ subTotal, taxesAmount]);
+  }, [subTotal, taxesAmount]);
 
-  const {mutate, isError, error} = useMutation({
+  const { mutate, isError, error } = useMutation({
     mutationKey: ["coupon-code"],
     mutationFn: async () => {
       if (!couponCodeRef.current) {
         return;
       }
-      const restaurantid = searchParams.get("restaurantId")
+      const restaurantid = searchParams.get("restaurantId");
       if (!restaurantid) {
         return;
       }
       const data: CouponCode = {
         code: couponCodeRef.current.value,
-        tenantId: restaurantid
+        tenantId: restaurantid,
       };
-      return await verifyCoupon(data).then(res=>res.data);
+      return await verifyCoupon(data).then((res) => res.data);
     },
-    onSuccess:(data)=>{
-        console.log("data rec", data)
-        if(data.valid){
-            setDiscountError("")
-            handleCouponCodeChange(couponCodeRef.current ? couponCodeRef.current.value : "")
-            setDiscountPercentage(data.discount)
-            return
-        }
-        setDiscountError("Coupon is invalid")
-        handleCouponCodeChange("")
-        setDiscountPercentage(0)
-    }
+    onSuccess: (data) => {
+      console.log("data rec", data);
+      if (data.valid) {
+        setDiscountError("");
+        handleCouponCodeChange(
+          couponCodeRef.current ? couponCodeRef.current.value : ""
+        );
+        setDiscountPercentage(data.discount);
+        return;
+      }
+      setDiscountError("Coupon is invalid");
+      handleCouponCodeChange("");
+      setDiscountPercentage(0);
+    },
   });
 
   const handleCouponValidation = (e) => {
     e.preventDefault();
-    mutate()
+    mutate();
   };
 
   return (
@@ -105,11 +114,15 @@ const OrderSummary = ({handleCouponCodeChange}:{handleCouponCodeChange:(code:str
         <div className="flex items-center justify-between">
           <span className="font-bold">Order total</span>
           <span className="font-bold flex flex-col items-center">
-            <span className={discountPercentage ? "line-through text-gray-400" :""}>₹{grandTotalWithOutDiscount}</span>
-            {
-                discountPercentage ? <span className="text-green-500">₹{grandTotalWithDiscount}</span>: null
-            }
+            <span
+              className={discountPercentage ? "line-through text-gray-400" : ""}
+            >
+              ₹{grandTotalWithOutDiscount}
             </span>
+            {discountPercentage ? (
+              <span className="text-green-500">₹{grandTotalWithDiscount}</span>
+            ) : null}
+          </span>
         </div>
         {discountError && <span className="text-red-500">{discountError}</span>}
         {isError && <span className="text-red-500">{error.message}</span>}
@@ -122,13 +135,26 @@ const OrderSummary = ({handleCouponCodeChange}:{handleCouponCodeChange:(code:str
             placeholder="Coupon code"
             ref={couponCodeRef}
           />
-          <Button type="submit" onClick={handleCouponValidation} variant={"outline"}>
+          <Button
+            type="submit"
+            onClick={handleCouponValidation}
+            variant={"outline"}
+          >
             Apply
           </Button>
         </div>
 
         <div className="text-right mt-6">
-          <Button type="submit">Place order</Button>
+          <Button disabled={isPlaceOrderPending} type="submit">
+            {isPlaceOrderPending ? (
+              <span className="flex items-center gal-2">
+                <LoaderCircleIcon className="animate-spin" />
+                <span>Please wait...</span>
+              </span>
+            ) : (
+              <span>Place order</span>
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>

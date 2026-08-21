@@ -48,12 +48,12 @@ const CustomerForm = () => {
     },
   });
 
-  const { mutate } = useMutation({
+  const { mutate, isPending: isPlaceOrderPending } = useMutation({
     mutationKey: ["order"],
     mutationFn: async (data: Orderdata) => {
       const idempotencyKey = idempotencyKeyRef.current
         ? idempotencyKeyRef.current
-        : (idempotencyKeyRef.current == uuidv4() + customer?._id);
+        : idempotencyKeyRef.current == uuidv4() + customer?._id;
       await createOder(data, idempotencyKey as string);
     },
     retry: 3,
@@ -225,6 +225,7 @@ const CustomerForm = () => {
           </CardContent>
         </Card>
         <OrderSummary
+          isPlaceOrderPending={isPlaceOrderPending}
           handleCouponCodeChange={(code) => setChosenCouponCode(code)}
         />
       </div>
