@@ -17,7 +17,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import OrderSummary from "./order-summary";
 import { useAppSelector } from "@/lib/store/hooks";
 import { useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
@@ -54,9 +54,17 @@ const CustomerForm = () => {
       const idempotencyKey = idempotencyKeyRef.current
         ? idempotencyKeyRef.current
         : idempotencyKeyRef.current == uuidv4() + customer?._id;
-      await createOder(data, idempotencyKey as string);
+      return await createOder(data, idempotencyKey as string).then(res=>res.data);
     },
     retry: 3,
+    onSuccess :(data:{paymentUrl:string | null})=>{
+      if(data.paymentUrl){
+        redirect(data.paymentUrl)
+      }
+      alert("order placed successfully")
+      // Todo: This will happen if payment mode is cash
+      // Redirect user to order status page
+    }
   });
 
   const handlePlaceOrder = (data: z.infer<typeof customerSchema>) => {
