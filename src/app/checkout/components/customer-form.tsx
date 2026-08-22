@@ -20,6 +20,8 @@ import { useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch } from "react-redux";
+import { clearCart } from "@/lib/store/features/cart/cart-slice";
 
 const customerSchema = z.object({
   address: z.string("Please select an address"),
@@ -38,6 +40,8 @@ const CustomerForm = () => {
   const idempotencyKeyRef = useRef("");
 
   const cart = useAppSelector((state) => state.cart);
+
+  const dispatch = useDispatch()
 
   const { data: customer } = useQuery<Customer>({
     queryKey: ["customer"],
@@ -65,6 +69,7 @@ const CustomerForm = () => {
         return;
       }
       alert("order placed successfully");
+      dispatch(clearCart())
       // Todo: This will happen if payment mode is cash
       // Redirect user to order status page
     },
