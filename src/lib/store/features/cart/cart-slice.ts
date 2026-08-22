@@ -66,10 +66,16 @@ export const cartSlice = createSlice({
 
       window.localStorage.setItem("cartItem", JSON.stringify(state.cartItem));
     },
+    clearCart: () => {
+      window.localStorage.setItem("cartItem", JSON.stringify([]));
+      return {
+        cartItem: [],
+      };
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addToCart, setInitialCart, changeQuantity } = cartSlice.actions;
+export const { addToCart, setInitialCart, changeQuantity, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;
