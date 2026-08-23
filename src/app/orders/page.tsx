@@ -14,12 +14,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Order } from "@/lib/types";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import React from "react";
 
 const Orders = async () => {
+  const response = await fetch(
+    `${process.env.BACKEND_URL}/api/order/orders/mine`,
+    {
+      headers: {
+        Authorization: `Bearer ${(await cookies()).get("accessToken")?.value}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error while fetching order");
+  }
+
+  // console.log("response", await response.json());
+  const orders = await response.json();
+  if(!orders){
+    return <div>Loading....</div>
+  }
   return (
-    <div className="container mt-8">
+    <div className="container mt-8 mx-auto">
       <Card>
         <CardHeader className="px-7">
           <CardTitle>Orders</CardTitle>
@@ -39,66 +59,28 @@ const Orders = async () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>22.05.24 13:22</TableCell>
-                <TableCell>
-                  <Badge variant={"outline"}>Completed</Badge>
-                </TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell className="text-right">
-                  <Link href="/order/1223" className="underline text-primary">
-                    More details
-                  </Link>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>22.05.24 13:22</TableCell>
-                <TableCell>
-                  <Badge variant={"outline"}>Completed</Badge>
-                </TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell className="text-right">
-                  <Link href="/order/1223" className="underline text-primary">
-                    More details
-                  </Link>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>22.05.24 13:22</TableCell>
-                <TableCell>
-                  <Badge variant={"outline"}>Completed</Badge>
-                </TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell className="text-right">
-                  <Link href="/order/1223" className="underline text-primary">
-                    More details
-                  </Link>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>22.05.24 13:22</TableCell>
-                <TableCell>
-                  <Badge variant={"outline"}>Completed</Badge>
-                </TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell className="text-right">
-                  <Link href="/order/1223" className="underline text-primary">
-                    More details
-                  </Link>
-                </TableCell>
-              </TableRow>
+              {orders.map((order: Order) => {
+                return (
+                  <TableRow key={order._id}>
+                    <TableCell className="font-medium">{order._id}</TableCell>
+                    <TableCell className="uppercase">{order.paymentStatus}</TableCell>
+                    <TableCell>{order.paymentMode}</TableCell>
+                    <TableCell>{order.createdAt}</TableCell>
+                    <TableCell>
+                      <Badge variant={"outline"}  className="uppercase">{order.orderStatus}</Badge>
+                    </TableCell>
+                    <TableCell>₹{order.total}</TableCell>
+                    <TableCell className="text-right">
+                      <Link
+                        href={`/order/${order._id}`}
+                        className="underline text-primary"
+                      >
+                        More details
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

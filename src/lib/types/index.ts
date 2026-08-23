@@ -94,3 +94,19 @@ export type Orderdata = {
   address: string;
   paymentMode: string;
 };
+
+export interface Order {
+  _id:string
+  customerId: string
+  total: number
+  discount: number
+  taxes: number
+  deliveryCahrges: number
+  address: string
+  tenantId: number
+  comment?:string
+  paymentMode: string
+  orderStatus: string
+  paymentStatus: string
+  createdAt: string
+}
