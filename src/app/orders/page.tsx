@@ -34,10 +34,8 @@ const Orders = async () => {
   }
 
   // console.log("response", await response.json());
-  const orders = await response.json();
-  if(!orders){
-    return <div>Loading....</div>
-  }
+  const orders = await response.json() || [];
+
   return (
     <div className="container mt-8 mx-auto">
       <Card>
@@ -46,7 +44,7 @@ const Orders = async () => {
           <CardDescription>My complete order history.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
+          {orders.length === 0 ? "No orders yet" : ( <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">ID</TableHead>
@@ -82,7 +80,8 @@ const Orders = async () => {
                 );
               })}
             </TableBody>
-          </Table>
+          </Table>)}
+         
         </CardContent>
       </Card>
     </div>
