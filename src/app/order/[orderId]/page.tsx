@@ -36,15 +36,13 @@ const SingleOrder = async ({
 
   const order:Order = await response.json()
 
-  console.log("order", order)
-
   return (
     <div className="container mt-6 flex flex-col gap-6 mx-auto">
       <Card>
         <CardHeader>Order</CardHeader>
         <CardDescription>Track the order status</CardDescription>
         <CardContent>
-          <OrderStatus />
+          <OrderStatus orderId={order._id}/>
         </CardContent>
       </Card>
       <div className="flex gap-6">

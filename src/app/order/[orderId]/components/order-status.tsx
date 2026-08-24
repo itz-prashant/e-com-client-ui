@@ -1,6 +1,9 @@
 "use client";
 
 import { Step, StepItem, Stepper, useStepper } from "@/components/stepper";
+import { getSingleOrder } from "@/lib/http/api";
+import { Order } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 import {
   CheckCheck,
   FileCheck,
@@ -30,19 +33,36 @@ const steps = [
   { label: "Delivered", icon: CheckCheck, description: "Order completed" },
 ] satisfies StepItem[];
 
-const StepperChanger = ()=>{
-    const  {setStep, nextStep} = useStepper()
+const statusMapping = {
+  received: 0,
+  confirmed: 1,
+  prepared: 2,
+  out_for_deliver: 3,
+  delivered: 4,
+} as { [key: string]: number };
 
-    useEffect(()=>{
-        setInterval(()=>{
-            nextStep()
-        },2000)
-    },[])
+const StepperChanger = ({ orderId }: { orderId: string }) => {
+  const { setStep } = useStepper();
 
-    return <></>
-}
+  const { data } = useQuery<Order>({
+    queryKey: ["order"],
+    queryFn: async () => {
+      return await getSingleOrder(orderId).then((res) => res.data);
+    },
+    refetchInterval: 1000 * 30,
+  });
 
-const OrderStatus = () => {
+  useEffect(() => {
+    if (data) {
+      const currentState = statusMapping[data.orderStatus] || 0;
+      setStep(currentState + 1);
+    }
+  }, [data]);
+
+  return <></>;
+};
+
+const OrderStatus = ({ orderId }: { orderId: string }) => {
   return (
     <Stepper
       initialStep={0}
@@ -55,7 +75,7 @@ const OrderStatus = () => {
           <Step key={label} label={label} icon={icon} checkIcon={icon}></Step>
         );
       })}
-      <StepperChanger />
+      <StepperChanger orderId={orderId} />
     </Stepper>
   );
 };
